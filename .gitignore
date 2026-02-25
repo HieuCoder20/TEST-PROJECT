@@ -8,4 +8,4 @@ instance/
 .vscode/
 .idea/
 *.db
-migrations/
+# migrations/ được giữ lại để chạy trên server production
