@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}Bản tin - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Search & Filter Header -->
+    <div class="mb-10 text-center">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Bạn đang tìm kiếm thứ gì?</h1>
+        <p class="text-gray-500 mb-8">Hệ thống kết nối và hỗ trợ tìm kiếm đồ thất lạc nhanh chóng trong khuôn viên.</p>
+
+        <div class="max-w-3xl mx-auto relative">
+            <input type="text" placeholder="Tìm kiếm 'ví tiền', 'chìa khóa'..."
+                class="w-full pl-12 pr-4 py-4 rounded-2xl border-none bg-white shadow-lg focus:ring-2 focus:ring-blue-400 outline-none text-lg">
+            <i class="fas fa-search absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl"></i>
+        </div>
+    </div>
+
+    <!-- Quick Filters -->
+    <div class="flex flex-wrap items-center justify-center gap-3 mb-10">
+        <button class="px-6 py-2 rounded-full bg-blue-600 text-white font-medium shadow-md">Tất cả</button>
+        <button
+            class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-red-50 hover:text-red-500 font-medium transition shadow-sm border border-gray-100">Đồ
+            bị mất</button>
+        <button
+            class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-green-50 hover:text-green-500 font-medium transition shadow-sm border border-gray-100">Đồ
+            nhặt được</button>
+        <button
+            class="px-6 py-2 rounded-full bg-white text-gray-600 hover:bg-gray-50 font-medium transition shadow-sm border border-gray-100 border-dashed">
+            <i class="fas fa-sliders-h mr-2"></i>Bộ lọc khác
+        </button>
+    </div>
+
+    <!-- Posts Grid -->
+    {% if posts.items %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {% for post in posts.items %}
+        <div
+            class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-shadow group flex flex-col h-full">
+            <div class="relative h-56 overflow-hidden">
+                {% if post.image_urls and post.image_urls|length > 0 %}
+                <img src="{{ post.image_urls[0] }}" alt="{{ post.title }}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                {% else %}
+                <div class="w-full h-full bg-gray-100 flex items-center justify-center">
+                    <i class="fas fa-image text-4xl text-gray-300"></i>
+                </div>
+                {% endif %}
+                <div class="absolute top-4 left-4">
+                    {% if post.item_type == 'lost' %}
+                    <span
+                        class="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Tin
+                        mất đồ</span>
+                    {% else %}
+                    <span
+                        class="bg-green-500 text-white text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider">Tin
+                        nhặt được</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="p-6 flex flex-col flex-grow">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded">{{ post.category
+                        }}</span>
+                    <span class="text-xs text-gray-400"><i class="far fa-clock mr-1"></i>{{
+                        post.created_at.strftime('%d/%m/%Y') }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2 truncate">
+                    <a href="{{ url_for('main.post_detail', post_id=post.id) }}" class="hover:text-blue-600">{{
+                        post.title }}</a>
+                </h3>
+                <p class="text-gray-500 text-sm mb-6 line-clamp-2">{{ post.description }}</p>
+
+                <div class="mt-auto space-y-3">
+                    <div class="flex items-center text-sm text-gray-600">
+                        <i class="fas fa-map-marker-alt w-5 text-gray-400"></i>
+                        <span>{{ post.location_building }}{% if post.location_room %} - {{ post.location_room }}{% endif
+                            %}</span>
+                    </div>
+                    <div class="border-t border-gray-100 pt-4 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div
+                                class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs">
+                                {{ post.author.username[0]|upper }}
+                            </div>
+                            <span class="ml-2 text-xs font-medium text-gray-700">{{ post.author.username }}</span>
+                        </div>
+                        <a href="{{ url_for('main.post_detail', post_id=post.id) }}"
+                            class="text-blue-600 text-sm font-bold hover:text-blue-700">Chi tiết <i
+                                class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-12 flex justify-center">
+        <nav class="flex items-center space-x-2">
+            {% if posts.has_prev %}
+            <a href="{{ url_for('main.index', page=posts.prev_num) }}"
+                class="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-600"><i
+                    class="fas fa-chevron-left"></i></a>
+            {% endif %}
+            <span class="px-4 py-2 text-sm font-medium text-gray-700">Trang {{ posts.page }} / {{ posts.pages }}</span>
+            {% if posts.has_next %}
+            <a href="{{ url_for('main.index', page=posts.next_num) }}"
+                class="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 text-gray-600"><i
+                    class="fas fa-chevron-right"></i></a>
+            {% endif %}
+        </nav>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="text-center py-20">
+        <div class="w-48 h-48 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8">
+            <i class="fas fa-box-open text-6xl text-blue-200"></i>
+        </div>
+        <h2 class="text-2xl font-bold text-gray-800 mb-2">Chưa có bài đăng nào</h2>
+        <p class="text-gray-500 mb-8">Chúc mừng! Hình như không ai đánh rơi gì cả.</p>
+        <a href="#" class="bg-blue-600 text-white px-8 py-3 rounded-full font-bold hover:bg-blue-700 transition">Đăng
+            tin ngay</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+

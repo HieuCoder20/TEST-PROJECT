@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý người dùng - Lost & Found{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-10">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-3xl font-extrabold text-gray-900">Quản lý người dùng</h1>
+            <p class="text-gray-500">Danh sách tất cả thành viên trong hệ thống</p>
+        </div>
+        <div class="relative">
+            <input type="text" placeholder="Tìm kiếm nickname..."
+                class="pl-10 pr-4 py-2 rounded-xl bg-white border border-gray-200 focus:ring-2 focus:ring-blue-100 outline-none shadow-sm">
+            <i class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-50 border-b border-gray-100 text-gray-400 text-xs font-bold uppercase tracking-wider">
+                <tr>
+                    <th class="px-6 py-4">Người dùng</th>
+                    <th class="px-6 py-4">Email / SĐT</th>
+                    <th class="px-6 py-4">Ngày tham gia</th>
+                    <th class="px-6 py-4 text-center">Uy tín</th>
+                    <th class="px-6 py-4 text-right">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for user in users.items %}
+                <tr class="hover:bg-gray-50 transition">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center">
+                            <div
+                                class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                {{ user.username[0]|upper }}
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-bold text-gray-900">{{ user.username }}</p>
+                                {% if user.is_locked %}
+                                <span
+                                    class="text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-bold">LOCKED</span>
+                                {% endif %}
+                                {% if user.is_admin %}
+                                <span
+                                    class="text-[10px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded font-bold">ADMIN</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <p class="text-sm text-gray-600">{{ user.email }}</p>
+                        <p class="text-xs text-gray-400">{{ user.phone or 'Chưa cập nhật' }}</p>
+                    </td>
+                    <td class="px-6 py-4 text-sm text-gray-500">
+                        {{ user.created_at.strftime('%d/%m/%Y') }}
+                    </td>
+                    <td class="px-6 py-4 text-center">
+                        <span class="text-sm font-bold text-blue-600">{{ user.reputation_points }}</span>
+                    </td>
+                    <td class="px-6 py-4 text-right space-x-2">
+                        <button class="p-2 text-gray-400 hover:text-blue-600 transition" title="Chi tiết"><i
+                                class="fas fa-info-circle"></i></button>
+                        {% if user.is_locked %}
+                        <button class="p-2 text-green-500 hover:text-green-600 transition" title="Mở khóa"><i
+                                class="fas fa-unlock"></i></button>
+                        {% else %}
+                        <button class="p-2 text-red-400 hover:text-red-500 transition" title="Khóa tài khoản"><i
+                                class="fas fa-lock"></i></button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-8 flex justify-between items-center text-sm text-gray-500 px-4">
+        <p>Hiển thị 20 user mỗi trang</p>
+        <div class="flex gap-2">
+            {% if users.has_prev %}
+            <a href="{{ url_for('admin.user_management', page=users.prev_num) }}"
+                class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">Trước</a>
+            {% endif %}
+            <span class="px-4 py-2 bg-blue-50 text-blue-600 font-bold rounded-lg border border-blue-100">{{ users.page
+                }}</span>
+            {% if users.has_next %}
+            <a href="{{ url_for('admin.user_management', page=users.next_num) }}"
+                class="px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">Sau</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

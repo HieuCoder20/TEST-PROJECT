@@ -1,0 +1,13 @@
+flask
+flask-sqlalchemy
+flask-migrate
+flask-login
+flask-socketio
+eventlet
+gunicorn
+psycopg2-binary
+scikit-learn
+python-dotenv
+cloudinary
+pandas
+numpy
