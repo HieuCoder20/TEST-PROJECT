@@ -2,7 +2,11 @@ import eventlet
 eventlet.monkey_patch()
 
 import os
+from dotenv import load_dotenv
+load_dotenv()
+
 from core import create_app, socketio
+
 app = create_app()
 
 if __name__ == "__main__":
