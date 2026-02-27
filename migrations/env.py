@@ -1,5 +1,5 @@
-import eventlet
-eventlet.monkey_patch(all=True)
+from gevent import monkey
+monkey.patch_all()
 
 import logging
 from logging.config import fileConfig
