@@ -3,7 +3,8 @@ flask-sqlalchemy
 flask-migrate
 flask-login
 flask-socketio
-eventlet
+gevent
+gevent-websocket
 gunicorn
 psycopg2-binary
 scikit-learn
