@@ -1,6 +1,8 @@
 from gevent import monkey
+monkey.patch_all(thread=False, socket=False) 
+import gevent
+gevent.sleep(0)
 monkey.patch_all()
-
 import logging
 from logging.config import fileConfig
 
