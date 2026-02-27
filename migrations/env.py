@@ -1,3 +1,6 @@
+import eventlet
+eventlet.monkey_patch(all=True)
+
 import logging
 from logging.config import fileConfig
 
